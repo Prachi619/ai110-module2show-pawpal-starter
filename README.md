@@ -39,20 +39,18 @@ pip install -r requirements.txt
 3. Convert UML into Python class stubs (no logic yet).
 4. Implement scheduling logic in small increments.
 5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
+6. Connect your logic to the Streamlit UI in app.py.
 7. Refine UML so it matches what you actually built.
 
-## 🖥️ Sample Output
+## ✨ Features
 
-Terminal output from running `python main.py`:
-
-```text
-Today's Schedule for Jordan (60 minutes available):
-- 06:45 Feeding (10 min, daily)
-- 08:00 Morning walk (25 min, daily)
-- 12:00 Brush coat (10 min, weekly)
-- 16:00 Playtime (15 min, daily)
-```
+- Multi-pet care tracking: one owner manages any number of pets, each with its own task list.
+- Task validation: tasks need a description, a positive duration, a frequency, and an optional time.
+- Sorting by time: tasks are ordered chronologically; tasks without a time go last.
+- Filtering: list tasks by pet name (case-insensitive), by completion status, or both.
+- Conflict warnings: pending tasks that share the same start time, even across different pets, produce a readable warning. Warnings are listed in chronological order.
+- Daily and weekly recurrence: completing a recurring task automatically adds the next occurrence with a due date 1 or 7 days later.
+- Time-budgeted daily plan: pending tasks are taken in time order and kept only if they fit the owner's available minutes.
 
 ## Implementation Summary
 
@@ -71,31 +69,85 @@ pytest --cov
 Sample test output:
 
 ```
-# Paste your pytest output here
+............                                                             [100%]
+12 passed in 0.03s
 ```
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
-
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | Scheduler.sort_by_time() | Orders tasks by theirHH:MM scheduled time; tasks without a time appear last. |
+| Task sorting | Scheduler.sort_by_time() | Orders tasks by their HH:MM scheduled time; tasks without a time appear last. |
 | Filtering | Owner.get_all_tasks() | Optional completion-status and pet-name filters. |
-| Conflict handling | Scheduler.detect_conflicts()| Returns warnings when pending tasks for any pets share an HH:MM start time. |
-| Recurring tasks | Scheduler.complete_task, Task.next_occurrence() | Completing a daily or weekly task marks it done and adds a fresh pending copy to the same pet; other frequencies (e.g. once) do not recur. |
+| Conflict handling | Scheduler.detect_conflicts() | Returns warnings when pending tasks for any pets share an start time. |
+| Recurring tasks | Scheduler.complete_task(), Task.next_occurrence() | Completing a daily or weekly task marks it done and adds a fresh pending copy to the same pet with due_date advanced by 1 day (daily) or 7 days (weekly), counted from the task's`due_date or today if unset; other frequencies do not recur. |
 | Plan generation | Scheduler.generate_plan() | Walks tasks in time order and keeps pending ones that fit the owner's remaining minutes. |
 
 
 
-## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+## 🎬 Demo Walkthrough
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+### Running the app
+
+```bash
+streamlit run app.py     # web UI
+python main.py           # terminal demo
+```
+
+### Main UI features
+
+In the Streamlit app (app.py) a user can:
+
+- Set time available today** in minutes.
+- Add pets by name and species (dog, cat, other).
+- Add care tasks** to a chosen pet: description, duration, scheduled time, and frequency (daily, weekly, as needed).
+- Review each pet's task table.
+- Click Generate schedule to see today's plan, with conflict warnings shown above it.
+
+### Example workflow
+
+1. Set time available to 60 minutes.
+2. Add a pet, for example "Mochi" (dog), then another, "Biscuit" (cat).
+3. Choose Mochi and add "Morning medication" (5 min, 06:45, daily). Choose Biscuit and add "Feeding" (10 min, 06:45, daily).
+4. Add a few more tasks, such as "Morning walk" (25 min, 08:00) and "Brush coat" (10 min, 12:00, weekly).
+5. Click Generate schedule. A yellow warning reports the 06:45 conflict between the two pets, followed by the plan in time order.
+
+### Scheduler behaviors shown
+
+- Sorting: the plan lists tasks by time regardless of the order they were added.
+- Conflict warnings: two tasks at 06:45 for different pets trigger a warning.
+- Time budget: tasks that would exceed the available minutes are left out of the plan.
+- Filtering and recurrence: demonstrated in main.py and covered by the tests. The web UI does not yet have a button to mark a task complete, so recurrence is not triggered from the UI.
+
+### Sample CLI output
+
+Output from python main.py:
+
+```text
+Today's Schedule for Jordan (60 minutes available):
+- 06:45 Morning medication (5 min, daily)
+- 06:45 Feeding (10 min, daily)
+- 08:00 Morning walk (25 min, daily)
+- 12:00 Brush coat (10 min, weekly)
+
+Schedule conflict warnings:
+WARNING: Conflict at 06:45: Morning medication for Mochi, Feeding for Biscuit
+
+All tasks sorted by time:
+- 06:45 Morning medication (completed: False)
+- 06:45 Feeding (completed: False)
+- 07:00 Breakfast (completed: True)
+- 08:00 Morning walk (completed: False)
+- 12:00 Brush coat (completed: False)
+- 16:00 Playtime (completed: False)
+
+Pending tasks for Mochi:
+- 08:00 Morning walk
+- 06:45 Morning medication
+- 12:00 Brush coat
+
+Completed tasks:
+- 07:00 Breakfast
+```
