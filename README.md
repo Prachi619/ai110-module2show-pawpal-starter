@@ -44,15 +44,19 @@ pip install -r requirements.txt
 
 ## 🖥️ Sample Output
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
+Terminal output from running `python main.py`:
 
+```text
+Today's Schedule for Jordan (60 minutes available):
+- Morning walk (25 min, daily)
+- Breakfast (10 min, daily)
+- Feeding (10 min, daily)
+- Playtime (15 min, daily)
 ```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
-```
+
+## Implementation Summary
+
+The backend logic lives in pawpal_system.py. Task stores an activity's description, duration, frequency, and completion status. Each Pet owns a list of tasks, and an Owner manages multiple pets and gathers their tasks with get_all_tasks(). Scheduler builds a plan from that owner-wide task list, skipping completed tasks and tasks that do not fit within the available time. main.py tests this in the terminal.
 
 ## 🧪 Testing PawPal+
 
