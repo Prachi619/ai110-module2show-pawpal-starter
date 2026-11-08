@@ -39,6 +39,8 @@ A little bit of change was made. I saw that the Owner to Pet and Pet to CareTask
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
+The conflict detector only flags tasks with the exact same start time; it does not check whether tasks with different start times overlap based on their durations. This keeps conflict detection simple and easy to explain, but a later improvement could compare the full time intervals. The AI assistant also suggested removing the sort of conflict times to avoid sorting, but I kept it because predictable, chronological warning output is more useful and readable. The task grouping is already a clear single pass, so the small sorting cost is reasonable.
+
 ---
 
 ## 3. AI Collaboration
