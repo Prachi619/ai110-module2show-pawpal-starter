@@ -6,6 +6,11 @@
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+3 core actions a user should be able to perform:
+    - Add pet owner and details
+    - Add or edit care tasks
+    - Generate and view the day's care plan
+
 
 **b. Design changes**
 
