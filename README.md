@@ -48,15 +48,15 @@ Terminal output from running `python main.py`:
 
 ```text
 Today's Schedule for Jordan (60 minutes available):
-- Morning walk (25 min, daily)
-- Breakfast (10 min, daily)
-- Feeding (10 min, daily)
-- Playtime (15 min, daily)
+- 06:45 Feeding (10 min, daily)
+- 08:00 Morning walk (25 min, daily)
+- 12:00 Brush coat (10 min, weekly)
+- 16:00 Playtime (15 min, daily)
 ```
 
 ## Implementation Summary
 
-The backend logic lives in pawpal_system.py. Task stores an activity's description, duration, frequency, and completion status. Each Pet owns a list of tasks, and an Owner manages multiple pets and gathers their tasks with get_all_tasks(). Scheduler builds a plan from that owner-wide task list, skipping completed tasks and tasks that do not fit within the available time. main.py tests this in the terminal.
+The backend logic lives in pawpal_system.py. Task stores an activity's description, scheduled time, duration, frequency, and completion status. Each Pet owns a list of tasks, and an Owner manages multiple pets and can filter their tasks by pet name or completion status. Scheduler sorts tasks chronologically, skips completed tasks, fits tasks within the available time, and reports same-time scheduling conflicts as warnings. main.py demonstrates these behaviors in the terminal.
 
 ## 🧪 Testing PawPal+
 
@@ -80,10 +80,13 @@ Sample test output:
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | Scheduler.sort_by_time() | Orders tasks by theirHH:MM scheduled time; tasks without a time appear last. |
+| Filtering | Owner.get_all_tasks() | Optional completion-status and pet-name filters. |
+| Conflict handling | Scheduler.detect_conflicts()| Returns warnings when pending tasks for any pets share an HH:MM start time. |
+| Recurring tasks | Scheduler.complete_task, Task.next_occurrence() | Completing a daily or weekly task marks it done and adds a fresh pending copy to the same pet; other frequencies (e.g. once) do not recur. |
+| Plan generation | Scheduler.generate_plan() | Walks tasks in time order and keeps pending ones that fit the owner's remaining minutes. |
+
+
 
 ## 📸 Demo Walkthrough
 
