@@ -6,16 +6,24 @@
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+
+The design uses four classes: 
+- Owner - stores the owner's name, available time, preferences, and pets
+- Pet - stores a pet's name, species, care needs, and care tasks
+CareTask - describes an activity with a title, duration, and priority
+- Scheduler - builds a daily plan for a selected owner and pet and explains its choices.
+
 3 core actions a user should be able to perform:
     - Add pet owner and details
     - Add or edit care tasks
     - Generate and view the day's care plan
 
-
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
+A little bit of change was made. I saw that the Owner to Pet and Pet to CareTask relationships were drawn but not represented in the classes. I added a pets list to Owner and a tasks list to Pet. I also changed Scheduler.generate_plan to take the selected owner and pet rather than a separate task list, so it can get tasks from that pet instead of receiving duplicate or mismatched task data. A plan is generated for one selected pet at a time.
 
 ---
 
@@ -40,10 +48,14 @@
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
+I used AI to brainstorm the main classes, draft the UML, and build out the Python logic and terminal demo. The most useful prompts described the project requirements and asked for a design or implementation that matched them, especially the requirement to schedule tasks across multiple pets.
+
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
+
+The first design used a scheduler that planned for one selected pet. I did not keep that approach because the requirement was to manage tasks across all of an owner's pets. I changed the design so Owner.get_all_tasks() gathers tasks from every pet and the scheduler reads from that method. I also ran main.py to check the terminal demo.
 
 ---
 
