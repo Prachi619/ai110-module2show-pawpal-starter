@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import re
+from datetime import date, timedelta
 from dataclasses import dataclass, field, replace
 
-RECURRING_FREQUENCIES = {"daily", "weekly"}
+RECURRING_FREQUENCIES = {"daily": 1, "weekly": 7}  # frequency -> days until next
 
 
 @dataclass
@@ -15,6 +16,7 @@ class Task:
     frequency: str
     completed: bool = False
     time: str | None = None
+    due_date: date | None = None
 
     def validate(self) -> bool:
         """Return whether the task has valid required details."""
@@ -35,12 +37,17 @@ class Task:
     def next_occurrence(self) -> Task | None:
         """Return a fresh pending copy of this task if it recurs, else None.
 
-        Only "daily" and "weekly" frequencies recur (case-insensitive); any
-        other frequency (e.g. "once") yields None.
+        Only "daily" (+1 day) and "weekly" (+7 days) recur (case-insensitive);
+        any other frequency (e.g. "once") yields None. The new due date is
+        counted from this task's due_date, or from today if it has none.
         """
         if self.frequency.strip().casefold() not in RECURRING_FREQUENCIES:
             return None
-        return replace(self, completed=False)
+        interval = RECURRING_FREQUENCIES[self.frequency.strip().casefold()]
+        base_date = self.due_date or date.today()
+        return replace(
+            self, completed=False, due_date=base_date + timedelta(days=interval)
+        )
 
 
 @dataclass
